@@ -1,6 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+    <!--mybatis master Mapper-->
+    <bean id="sqlSessionFactoryMaster" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation" value="classpath:mybatis/mybatis_conf.xml"></property>
+        <property name="dataSource" ref="dataSourceMaster"/>
+        <property name="mapperLocations" value="classpath:mybatis/sqlmap/*Mapper.xml"/>
+    </bean>
+    <bean id="sqlSessionMaster" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactoryMaster"/>
+    </bean>
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.dmall.pay.collectionsrefunds.dao"/>
+        <property name="sqlSessionTemplateBeanName" value="sqlSessionMaster"/>
+    </bean>
+
+    <!--mybatis slave Mapper-->
+    <bean id="sqlSessionFactorySlave" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation" value="classpath:mybatis/mybatis_conf.xml"></property>
+        <property name="dataSource" ref="dataSourceSlave"/>
+        <property name="mapperLocations" value="classpath:mybatis/sqlmap/*Mapper.xml"/>
+    </bean>
+    <bean id="sqlSessionSlave" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactorySlave"/>
+    </bean>
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionTemplateBeanName" value="sqlSessionSlave"/>
+        <property name="basePackage" value="com.dmall.pay.collectionsrefunds.dao"/>
+    </bean>
+
+
+
+    <!--开启spring注解事务-->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!--master dataSource-->
+    <bean id="dataSourceMaster" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="name" value="druidDataSource"/>
+        <property name="driverClassName" value="${druid.jdbc.driver}"/>
+        <property name="url" value="${druid.jdbc.master.url}"/>
+        <property name="username" value="${druid.jdbc.master.username}"/>
+        <property name="password" value="${druid.jdbc.master.password}"/>
+        <property name="initialSize" value="${druid.initialSize}"/>
+        <property name="minIdle" value="${druid.minIdle}"/>
+        <property name="maxActive" value="${druid.maxActive}"/>
+        <property name="maxWait" value="${druid.maxWait}"/>
+        <property name="removeAbandoned" value="${druid.removeAbandoned}"/>
+        <property name="removeAbandonedTimeout" value="${druid.removeAbandonedTimeout}"/>
+        <property name="timeBetweenEvictionRunsMillis" value="${druid.timeBetweenEvictionRunsMillis}"/>
+        <property name="minEvictableIdleTimeMillis" value="${druid.minEvictableIdleTimeMillis}"/>
+        <property name="testWhileIdle" value="${druid.testWhileIdle}"/>
+        <property name="testOnBorrow" value="${druid.testOnBorrow}"/>
+        <property name="testOnReturn" value="${druid.testOnReturn}"/>
+        <property name="poolPreparedStatements" value="${druid.poolPreparedStatements}"></property>
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="${druid.maxPoolPreparedStatementPerConnectionSize}"/>
+        <property name="validationQuery" value="${druid.validationQuery}"/>
+        <property name="filters" value="${druid.filters}"/>
+    </bean>
+
+    <!--slave dataSource-->
+    <bean id="dataSourceSlave" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="name" value="druidDataSource"/>
+        <property name="driverClassName" value="${druid.jdbc.driver}"/>
+        <property name="url" value="${druid.jdbc.slave.url}"/>
+        <property name="username" value="${druid.jdbc.slave.username}"/>
+        <property name="password" value="${druid.jdbc.slave.password}"/>
+        <property name="initialSize" value="${druid.initialSize}"/>
+        <property name="minIdle" value="${druid.minIdle}"/>
+        <property name="maxActive" value="${druid.maxActive}"/>
+        <property name="maxWait" value="${druid.maxWait}"/>
+        <property name="removeAbandoned" value="${druid.removeAbandoned}"/>
+        <property name="removeAbandonedTimeout" value="${druid.removeAbandonedTimeout}"/>
+        <property name="timeBetweenEvictionRunsMillis" value="${druid.timeBetweenEvictionRunsMillis}"/>
+        <property name="minEvictableIdleTimeMillis" value="${druid.minEvictableIdleTimeMillis}"/>
+        <property name="testWhileIdle" value="${druid.testWhileIdle}"/>
+        <property name="testOnBorrow" value="${druid.testOnBorrow}"/>
+        <property name="testOnReturn" value="${druid.testOnReturn}"/>
+        <property name="poolPreparedStatements" value="${druid.poolPreparedStatements}"></property>
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="${druid.maxPoolPreparedStatementPerConnectionSize}"/>
+        <property name="validationQuery" value="${druid.validationQuery}"/>
+        <property name="filters" value="${druid.filters}"/>
+    </bean>
+
+    <!--主库开启事务，从库用于读不开启事务-->
+
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSourceMaster"/>
+    </bean>
 
 </beans>
