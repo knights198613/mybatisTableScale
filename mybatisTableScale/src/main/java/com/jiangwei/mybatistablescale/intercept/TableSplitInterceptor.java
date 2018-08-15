@@ -5,6 +5,8 @@ import com.jiangwei.mybatistablescale.strategy.Strategy;
 import com.jiangwei.mybatistablescale.strategy.StrategyManager;
 import com.jiangwei.mybatistablescale.utils.ContextHelper;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -40,7 +42,7 @@ public class TableSplitInterceptor implements Interceptor {
 		// Configuration configuration = (Configuration) metaStatementHandler
 		// .getValue("delegate.configuration");
 		Object parameterObject = metaStatementHandler.getValue("delegate.boundSql.parameterObject");
-		doSplitTable(metaStatementHandler,parameterObject);
+		doSplitTable(metaStatementHandler, parameterObject);
 		// 传递给下一个拦截器处理
 		return invocation.proceed();
 
@@ -83,7 +85,6 @@ public class TableSplitInterceptor implements Interceptor {
 			if (method != null) {
 				tableSplit = method.getAnnotation(TableSplit.class);
 			}
-
 			if (tableSplit == null) {
 				tableSplit = clazz.getAnnotation(TableSplit.class);
 			}

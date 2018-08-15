@@ -94,6 +94,14 @@
 
 
 
-
+    <!--注入分表策略-->
+    <bean id="strategyManager" class="com.jiangwei.mybatistablescale.strategy.StrategyManager">
+        <property name="strategies">
+            <map>
+                <entry key="remainder" value="com.jiangwei.mybatistablescale.strategy.impl.RemainderStrategy"/>
+                <entry key="YYYY" value="com.jiangwei.mybatistablescale.strategy.impl.YYYYStrategy"/>
+            </map>
+        </property>
+    </bean>
 
 </beans>

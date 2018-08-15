@@ -1,6 +1,5 @@
 package com.jiangwei.mybatistablescale.strategy.impl;
 
-import com.dushangkui.domyself.common.util.split.Strategy;
 import com.jiangwei.mybatistablescale.strategy.Strategy;
 
 import java.text.SimpleDateFormat;
