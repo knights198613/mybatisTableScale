@@ -5,8 +5,6 @@ import com.jiangwei.mybatistablescale.strategy.Strategy;
 import com.jiangwei.mybatistablescale.strategy.StrategyManager;
 import com.jiangwei.mybatistablescale.utils.ContextHelper;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -17,6 +15,8 @@ import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -26,7 +26,8 @@ import java.util.Properties;
 
 @Intercepts({ @Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class }) })
 public class TableSplitInterceptor implements Interceptor {
-	private Log log = LogFactory.getLog(getClass());
+	private Logger logger = LoggerFactory.getLogger(TableSplitInterceptor.class);
+
 	private static final ObjectFactory DEFAULT_OBJECT_FACTORY = new DefaultObjectFactory();
 	private static final ObjectWrapperFactory DEFAULT_OBJECT_WRAPPER_FACTORY = new DefaultObjectWrapperFactory();
 
@@ -60,10 +61,16 @@ public class TableSplitInterceptor implements Interceptor {
 
 	}
 
-	private void doSplitTable(MetaObject metaStatementHandler,Object param ) throws Exception {
+	/**
+	 * 调度策略实现分表（其实就是sql改写）
+	 * @param metaStatementHandler
+	 * @param param
+	 * @throws Exception
+	 */
+	private void doSplitTable(MetaObject metaStatementHandler, Object param) throws Exception {
 		String originalSql = (String) metaStatementHandler.getValue("delegate.boundSql.sql");
 		if (originalSql != null && !originalSql.equals("")) {
-			log.info("分表前的SQL：\n" + originalSql);
+			logger.info("分表前的SQL：\n" + originalSql);
 			MappedStatement mappedStatement = (MappedStatement) metaStatementHandler.getValue("delegate.mappedStatement");
 			String id = mappedStatement.getId();
 			String className = id.substring(0, id.lastIndexOf("."));
@@ -97,7 +104,7 @@ public class TableSplitInterceptor implements Interceptor {
 				}
 				metaStatementHandler.setValue("delegate.boundSql.sql", convertedSql);
 
-				log.info("分表后的SQL：\n" + convertedSql);
+				logger.info("分表后的SQL：\n" + convertedSql);
 			}
 		}
 	}

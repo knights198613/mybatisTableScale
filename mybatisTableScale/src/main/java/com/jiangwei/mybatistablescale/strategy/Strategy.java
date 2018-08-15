@@ -11,7 +11,9 @@ public interface Strategy {
 	 * 分表维度字段
 	 */
 	String SPLIT_FIELD="split_field";
+
 	String EXECUTE_PARAM_DECLARE="execute_param_declare";
+
 	String EXECUTE_PARAM_VALUES="execute_param_values";
 	/**
 	 * 传入一个需要分表的表名，返回一个处理后的表名 

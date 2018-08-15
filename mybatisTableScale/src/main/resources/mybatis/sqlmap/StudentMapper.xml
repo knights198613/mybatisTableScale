@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.dmall.metrics.dc.alarm.dao.AlarmApplicationMapper">
+<mapper namespace="com.jiangwei.mybatistablescale.dao.StudentMapper">
     <resultMap id="baseResultMap" type="Student">
         <result column="id" jdbcType="INTEGER" property="id"/>
         <result column="code" jdbcType="INTEGER" property="code"/>
@@ -11,4 +11,9 @@
         id, code, name
     </sql>
 
+    <select id="selectOneByCode" resultMap="baseResultMap" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="baseSql"/>
+        FROM student_x WHERE code = #{code}
+    </select>
 </mapper>
