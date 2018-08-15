@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * Date: 2018/8/15
  * DESC: 分表实体注解标识分表机制
  */
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface TableSplit {
     //是否分表

@@ -41,12 +41,30 @@ public class RemainderStrategy implements Strategy {
 				value = JsonUtil.getString((Map<String, Object>) paramValue, field);
 			}
 
+		}else if(isBaseJavaType(paramValue)) {
+            value = String.valueOf(paramValue);
 		}else{
 			value= BeanUtils.getProperty(paramValue,field);
 		}
 		Integer reminder = Integer.valueOf(value) % DIVIDER;
 		sb.append(Integer.toHexString(reminder));
 		return sb.toString();
+	}
+
+
+	private boolean isBaseJavaType(Object paramValue) {
+		if(paramValue != null) {
+			if(paramValue instanceof Integer)
+				return true;
+			if(paramValue instanceof String)
+				return true;
+			if(paramValue instanceof Long)
+				return true;
+			else
+				return false;
+		}else {
+			return false;
+		}
 	}
 
 }
